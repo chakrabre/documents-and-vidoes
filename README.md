@@ -29,3 +29,6 @@ https://gist.github.com/tuannvm/4e1bcc993f683ee275ed36e67c30ac49
 https://miro.medium.com/max/1400/1*5tZVl-tqZwSoxH97v4u45w.png
 
 https://www.docker.com/sites/default/files/d8/2019-09/docker-cheat-sheet.pdf?utm_source=twitter&utm_medium=social&utm_campaign=dockercheatsheet&utm_content=dockercheatsheet&utm_term=dockercheatsheet&utm_budget=&utm_content=1574461716
+
+Kubernetes security best practices
+https://www.stackrox.com/post/2020/05/kubernetes-security-101/
