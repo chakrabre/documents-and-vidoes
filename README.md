@@ -32,3 +32,7 @@ https://www.docker.com/sites/default/files/d8/2019-09/docker-cheat-sheet.pdf?utm
 
 Kubernetes security best practices
 https://www.stackrox.com/post/2020/05/kubernetes-security-101/
+
+Nginx reverse proxy 
+
+https://www.scaleway.com/en/docs/how-to-configure-nginx-reverse-proxy/
