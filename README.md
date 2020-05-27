@@ -42,3 +42,7 @@ https://www.scaleway.com/en/docs/how-to-configure-nginx-reverse-proxy/
 Ansible playbooks :
 
 https://www.bogotobogo.com/DevOps/Ansible/Ansible-Handlers.php
+
+Reverse Proxy :
+
+https://dzone.com/articles/10-tips-for-10x-application-performance
