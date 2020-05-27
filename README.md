@@ -25,6 +25,8 @@ http://www.mastertheboss.com/soa-cloud/openshift/openshift-cheatsheet
 7. Helm cheat sheet: https://lnkd.in/eupFcpy
 https://gist.github.com/tuannvm/4e1bcc993f683ee275ed36e67c30ac49
 
+
+
 8. Jenkins cheat sheet: https://lnkd.in/eEdSkWX
 https://miro.medium.com/max/1400/1*5tZVl-tqZwSoxH97v4u45w.png
 
@@ -36,3 +38,7 @@ https://www.stackrox.com/post/2020/05/kubernetes-security-101/
 Nginx reverse proxy 
 
 https://www.scaleway.com/en/docs/how-to-configure-nginx-reverse-proxy/
+
+Ansible playbooks :
+
+https://www.bogotobogo.com/DevOps/Ansible/Ansible-Handlers.php
