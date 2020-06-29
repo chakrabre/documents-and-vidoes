@@ -1,0 +1,553 @@
+A-Z
+What Is Kubernetes?
+Kubernetes is an application runtime platform based oncontainersand can be confusing and overwhelming to many. Read this documentation to better
+understand business value and key concepts:
+The Essential Guide to Kubernetes
+Kubernetes for Product Managers
+Kubernetes Developer Documentation(Official)
+Table of Contents
+What Is Kubernetes?
+Table of Contents
+Product Overview
+Getting Started
+Environments and SLA's
+Capabilities and Release Info
+Product Roadmap
+Child Pages
+Product Overview
+Liberty Mutual Central IT teams provide container runtime platforms that makes deploying and managing containerized applications easy, based on
+Kubernetes. Our offerings are built leveraging products from enterprise-leading providers and we're constantly working to ensure that platforms are
+reliable, cost-effective, and secure.
+Status: BETA V1.0
+This environment is not suitable for critical workloads at this time. Prior to 'GA' status, the environment may undergo impactful changes resulting in extra
+effort for development teams. To stay informed on platform activities, please follow the#kubes-communitySlack,Container Platforms MyConnections, andCl
+oudForge StatusPage.
+Provide anonymous feedback on the beta experiencehere.
+What's included:
+Fully-managed, compliant Kubernetes environments for applications
+Kubernetes config generator via CloudForge Console experience
+Bamboo build and deploy pipelines, through production
+Environments in Central, shared AWS account
+RBAC via Azure AD
+Splunk Logging integration
+CloudForge StatusPageintegration for incident and maintenance info
+Resource isolation based on CloudForge organizations
+Management User Interface, command line experience
+Local developer experience examples
+What is not included:
+Dedicated clusters in SBU-aligned AWS accounts
+Vault secrets integration (targeted for May 2020)
+Persistent Storage Solution
+Aqua runtime scanning
+Disaster Recovery solutions
+"Bring your own" K8s yamls for production deploys
+Reporting, analytics, application TCO
+Native multi-service support
+Risks/Considerations:
+Beta offering is subject to frequent underlying changes to the infrastructure. Prod SLA cannot be guaranteed for 99.9% availability
+Getting Started
+Read theSetup and Quick Start Guideto get startedwith deploying to Kubernetes.
+Environments and SLA's
+To understand available environments, console links, and SLA's, check out this page:Environments Overview
+Capabilities and Release Info
+View detailed Kubernetes platform capabilities, short-term release roadmap, and features coming soon :LINK
+Product Roadmap
+To learn about high-level Container Platforms product initiatives and features, check-out ourCloudForge Product Roadmap
+To vote on capabilities and new features, check out ourPublic Containers Roadmap
+Child Pages
+Setup and Quick Start
+Environments Overview
+Kubernetes Roles and Groups
+Networking, Connectivity & Firewall
+Troubleshooting Guides
+Releases and Capabilities
+Build and Deploy to Kubernetes
+Reference & Architecture
+Kubernetes Deployment SPI
+Who is this for?
+Developers who wish to deploy their applications from Bamboo to Kubernete
+Prerequisites
+Using Bamboo for your deployment
+App is built into a container image and stored in container-images.lmig.com (Artifactory)
+How do I use it?
+This SPI is invoked through a Forge Manifest Processor task in your deploy plan. Only one parameter is required: the location of your Camfile(documented
+below) in your Bamboo workspace.
+What is a Camfile?
+The Camfile (container application manifest file) is designed to simplify the creation of Kubernetes resources by accepting resource and metadata
+parameters and converting it into Kubernetes resources. Each Camfile will be converted using the Camfile to Kubernetes Job (repo linked below) to create
+3 Kubernetes resources, a Deployment, a Service, and an Ingress.
+Camfile Overview
+What is a Camfile?
+To help facilitate an easy transition for application teams to deploy to complex runtimes, the Camfile (container application manifest file)is created to accept
+the minimum metadata parameters which is then ingested by a service that converts it to a format consumable by the target runtime platform. This allows
+developers to deploy their applications to platforms without requiring deep knowledge of the underlying API and syntax of runtime.
+Repositories containing the conversion services are listed below.
+Example Camfile with all options specified
+Example CAMfile with all options
+---
+apiVersion:containers.libertymutual.com/v1
+kind:defaultapp
+metadata:
+name:my-shiny-new-app
+spec:
+image:shiny-new-image:latest
+replicas:2
+resources:
+requests:
+cpu:500m
+memory:128Mi
+limits:
+cpu:500m
+memory:256Mi
+labels:
+-name:my-custom-label
+value:some.label.value
+env:
+-name:my_env_var_name
+value:some value
+-name:db_host_name
+value:db.lmig.com
+network:
+port:8080
+routes:
+-app-name.app.k8s.nonprod.aws.lmig.com
+-app-name.app.k8s.prod.aws.lmig.com
+Properties
+* Indicates required property
+apiVersion *
+kind *
+metadata *
+name *
+spec *
+image *
+replicas *
+resources
+requests
+cpu
+memory
+limit
+cpu
+memory
+labels
+env
+network *
+port *
+routes *
+apiVersion *
+Version of API being used. More information to come as updates and changes to options for Camfile are made.
+Valid Values:containers.libertymutual.com/v1
+kind *
+Resource intended to run. 'defaultapp' is the only kind currently supported. There is work to further expand camfile capabilities like functionality with
+WAS Applications.
+Valid Values:defaultapp
+metadata *
+name *
+Desired name of your resource. This will be automatically set up as your${artifact_key} if you so choose to leave it.
+Valid Values:any,no special characters except '-' and '_'
+spec *
+image *
+Docker image stored in Artifactory
+Valid Values:container-images.lmig.com/docker/app/{image-name}:{image-tag}
+replicas *
+Desired number of running containers for your application
+resources
+requests
+The minimum amount of resources your app needs to run. If requests aren't specified,it'll default to the limit specified below.
+cpu
+How many CPUs to allocate to the service. Can be specified as measure in milliCPUs (1/1000 of a CPU)
+Valid Values:156m to 1000m
+NOTE: Be sure to know your CPU needs, as deploying with not enough CPU will result in application issues in the future.
+memory
+How much memoryto allocate to the service
+Valid Values:128Mi, 256Mi
+NOTE: Be sure to know your Memory needs, as deploying with not enough Memory will result in app deployment failure.
+ If a Container exceeds its memory request, it is likely that its Pod will be evicted whenever the node runs out of memory.
+limit
+An upper limit on resources that each instance of this app is allowed to use; if a container or pod uses more resources than its limit, it
+may be terminated. If not limit is set,
+cpu
+How many CPUs to allocate to the service, measured in milliCPUs (1/1000 of a CPU)
+Valid Values:156m to 1000m
+NOTE:Be sure to know your CPU needs, as deploying with not enough CPU willresult in app deployment failure.
+memory
+How much memoryto allocate to the service
+Valid Values: 128Mi, 256Mi
+Notes:Be sure to know your Memory needs, as deploying with a low Memory Limit will result in your app not deploying correctly.
+ If a Container exceeds its memory limit, it might be terminated. If it is restartable, the kubelet will restart it, as with any other
+type of runtime failure.
+labels
+Custom labels may be applied to your resources by specifying name/value pairs.
+Valid values:
+Maximum length: 63 characters.
+Valid characters: Letters, numbers, periods, and hyphens
+env
+Environment variables to inject into your application runtime
+Valid Values: any, except names can't have special characters other than '_'
+network *
+port *
+The port exposed from your application container
+Valid Values:0-65536
+routes *
+External route(s) to your application - desired application URL. You can specify as many routes you would like. See syntax formatting in example.
+Valid Values:list of URLs
+Example Forge Manifest File
+manifest.yml
+---
+deploy_containers:
+external_files:
+-./path-to-camfile
+variables:
+-name:image_tag
+value:'${bamboo.buildNumber}'
+-name:artifact_key
+value:'${bamboo.forge.artifact.key}'
+-name:business_unit_key
+value:'${bamboo.forge.business_unit.key}'
+-name:organization_key
+value:'${bamboo.forge.organization.key}'
+Variables:
+Items under the 'variables' section of the Forge Manifest file are accessible within your camfile to auto-populate dynamic values.
+Sample repo and deploy plan
+Repo
+https://git.forge.lmig.com/projects/CAAS/repos/docker-deploy-spi-demo/browse
+Deploy plan
+https://forge.lmig.com/builds/deploy/viewDeploymentProjectEnvironments.action?id=703694956
+How do I add Secrets/Standard Changes/IDP to my Deployments?
+For adding Secrets/Standards Changes/IDP, you can reference the CloudForge documentation located here:https://docs.forge.lmig.com/articles/specs
+/addons/addons-overview
+If you need any help with this, please contact us on the Support link below.
+How do I get support?
+Through the CloudForge Service Desk, located athttps://forge.lmig.com/issues/servicedesk/customer/portal/150/create/10511
+WAS Containerization-Kevin, May27,2020
+Onboarding
+Recommended Training
+VDE Setup and Configuration
+Run a WAS Base Image
+Bitbucket Repositories, Build Jobs, and Image Repositories
+Purpose Bitbucket Repository Build Job Image
+Repository
+Purpose Bitbucket Repository Build Job Image
+Repository
+WAS 9 Base Image
+(Hosting)
+https://git.forge.lmig.com/projects/DIP/repos/ar-was-base905-ubuntu/browse
+https://forge.lmig.com/builds/browse/DIP-AWB9U ar-was-base905-ubuntu
+Configuration Library https://git.forge.lmig.com/projects/USCM-DEVOPS/repos
+/mwc-was-config-mgmt/browse
+https://forge.lmig.com/builds/chain/viewChain.action?
+planKey=USCMDEVOPS-MWCM
+N/A
+extract-tester -
+Example Application
+https://git.forge.lmig.com/projects/USCM-DEVOPS/repos
+/was-extract-tester/browse
+https://forge.lmig.com/builds/browse/USCMDEVOPS-WET was-extracttester
+References
+WAS Application Onboarding
+WAS Production Go-Live Checklist
+WAS Containerization Changelogs
+WAS Pipeline POC
+WAS Pipeline POC- Kevin Vecchione- last Modified-May14th 2020
+Overview
+This document will describe the steps taken to deploy the first application to Kubernetes via a Bamboo build and deploy pipeline. It will also outline the
+current deficiencies in the pipeline, some of which are still being worked on, but other which will remain due to technical gaps. When comparing features,
+we are comparing this model the current BPM implementation on Jenkins/Docker where applicable.
+Implementation
+1.
+2.
+3.
+4.
+a.
+b.
+i.
+ii.
+c.
+d.
+5.
+6.
+7.
+8.
+Create a new Kubernetes artifact using the Kubernetes (beta) tile in CloudForge Console:https://console.forge.lmig.com/builder/kubernetes
+Add an environment
+Once the artifact is created, clone the git repo to your local machine
+Using the was-test-app-b repo, develop branch as an example, create a new develop branch in this repo
+Dockerfile - standard Dockerfile that will build the image (see image_build/Dockerfile.example in mwc-was-config-mgmt repo)
+config - Folder for application configuration
+app_config.yml - Configuration for config library version, modules, environments
+predeploy/runtime - Configuration for various phases using WAS configuration library
+deployment - Bamboo deployment configuration (camfile, forge manifest)
+bamboo-specs - Bamboo pipeline specifications - Do not change/delete this
+Update the filedeployment/app-<env>-camfile.ymlto include information about the deployment (route, resources, variables, etc.)
+Commit and push your changes, this will result in a build in Bamboo
+Once the Bamboo build is complete, create a release
+The release name will default to the convention <branch>-<build number>, but can be overridden manually. Click Create Release.
+9.
+10.
+1.
+a.
+2.
+a.
+3.
+a.
+b.
+4.
+a.
+b.
+i.
+ii.
+iii.
+c.
+i.
+ii.
+iii.
+5.
+a.
+6.
+7.
+a.
+b.
+8.
+9.
+a.
+1.
+a.
+2.
+Click the deploy button to deploy the release to the environment manually:
+Verify deployment with kubectl:
+Pipeline Concerns
+Secrets are not available
+This is being worked on and is expected to release in a few weeks
+Default image tag does not represent the branch at all and leaves open high possibility for tag collisions
+This is fixable on a per-repo basis with spec overrides, work is being done now to test possible solutions, preference is still a more
+reasonable default value
+Camfile uses deployments, not configurable
+This is being worked on, will have a custom "kind" for WAS deployments which will use StatefulSets and a few other customizations
+Will have additional fields for ingress annotations (timeout overrides, etc)
+Release pattern
+Releases are manually created - Potential to change this to different triggers (scheduled, automatic) but this would require customization
+to the deployment spec (see below why this is still a technical gap)
+Releases can't be "promoted" automatically - The only trigger types in bamboo are:
+successful build - Triggers automatically based on a successful build of a subscribed branch
+scheduled - Triggers deployment (and release creation, if needed) of last good build on a subscribed branch
+after stage - Triggers based on specific stage of build plan - not useful to us
+In general this process is extremely manual and will remove the following features we have in BPM
+Scheduled builds - Not as much of an issue for WAS as it will be for BPM, but will create a large amount of unused images
+Scheduled release promotion (deploy to environment B what's currently in deployed to A)
+Centralized Scheduling - Every schedule will be aligned specifically to the environment in the bamboo spec - unknown if
+customizable to a central schedule/groupings - even if so the schedule would only be applied when the spec updates (not
+immediately)
+Will only master branches be allowed in production? This deviates from the BPM-style deployments where a specific release is deployed to
+production during the monthly/weekly release window. It's not a technical limitation, but it does change our release process quite a bit.
+Shawn says he thinks this won't be an issue, will need to verify.
+Pipeline changes will be in Java bamboo specs - This is OK, but we will need to learn and adapt these pipeline-specific settings to correctly
+update the setting we want to change. This keeps us tightly coupled to Bamboo.
+This process cannot be used for existing artifacts - Artifacts that are currently deployed to Docker cannot be realigned to deploy to Kubernetes.
+You currentlymustcreate a brand new artifact
+This is currently being worked on, and is related to a limitation in Card Catalog.
+If a new artifact ends up being required, secrets will have to be migrated to the new artifact - manually as of right now
+Scaling / Deployment changes require a rebuild of the image. Deployment variables live with the build data in the repository so we will always
+need to rebuild the image to declaratively (config as code) deploy a change to deployment properties (CPU, memory, replicas, etc.)
+Bamboo specs are not versioned
+The current model of bamboo specs is such that you will always consume the latest version of inherited pipeline specs with no ability to
+pin versions
+Other Concerns
+Bulk secrets upload process doesn't exist
+Secrets upload in Cloudforge Console is a one-by-one process
+CloudForge links secrets access to repo access, so there are issues implementing a policy which allows self-service configuration while
+disallowed secrets access for developers
+3.
+4.
+1.
+2.
+a.
+b.
+c.
+3.
+a.
+4.
+5.
+a.
+b.
+c.
+d.
+e.
+f.
+g.
+h.
+i.
+j.
+k.
+6.
+7.
+8.
+9.
+a.
+b.
+c.
+d.
+10.
+11.
+12.
+Troux alignment for shared artifacts - We would like to keep a shared ownership model in place for the configuration repositories. Troux
+alignments are not allowed to cross CloudForge organizational boundaries so these artifacts need to either be in the development teams'
+organizations (ATS loses access) or in a new shared organization (can't align to existing troux applications).
+Helper jobs - The bamboo model does not lend itself well to helper job "pipelines" - restart leg, change log settings, heap/thread dumps, module
+version update, release branch merge
+Examples
+Repo:https://git.forge.lmig.com/projects/USCM-DEVOPS/repos/was-test-app-b/browse?at=refs%2Fheads%2Fdevelop
+Build:https://forge.lmig.com/builds/browse/USCMDEVOPS-WTAB0-2
+Deploy:https://forge.lmig.com/builds/deploy/viewDeploymentResult.action?deploymentResultId=781211970
+WAS Application Onboarding-May 26,Kevin
+The middleware containerization (MWC) team has enabled the deployment of Websphere Application Server (WAS) Base in Kubernetes. This deployment
+utilizes Bamboo as a pipeline for both image build and deployment, and builds on top of a hosting-developed WAS 9.0 base image. This guide should help
+development teams and others by providing a "getting started" guide for setting up an application using the MWC WAS container platform as well as a highlevel overview of the concepts used within the product.
+Getting Started
+Request developer group access (if you don't already have it) to the MWC CloudForge organization aligned to your portfolio, see:MWC
+CloudForge Organization Model
+Determine repo/application name. Requirements:
+Must use dashes, not underscores in the repo/application name
+Limitof20charactersfor the application name
+Must be unique across all MWC WAS applications (all portfolio organizations)
+Create a Kubernetes artifact using theCloudForge Console
+You will need to create an environment along with this step, but you can add more later if desired. This step will drop some templated
+files in the repository for Kubernetes deployment purposes.
+Copy the template data from the example_release branch of thewas-configuration-templateinto your new repository in a release branch (release
+/<release_name>)
+Determine which configuration resources will be required for your application(s). Examples:
+MQ queue connection factories
+MQ queues
+MQ activation specifications
+JAAS aliases
+DB2/Oracle/MySQL/MSSQL Drivers
+Datasources
+J2C resource adapters
+Custom keystores/client certificates
+Custom truststore certificates
+more
+NOTE: We are also developing anextract toolwhich may be used to help extract data from previous WAS deployments to help speed up
+configuration translation.
+Configure app_config.yml to define EAR URLs, environments, and config library version. For configuration library versions, see:WAS
+Configuration Management Library Changelog
+Add non-environment specific configurations to predeploy phase configurations
+Add environment-specific and sensitive configurations to runtime configuration
+If needed, configure optional components
+ansible playbooks
+properties files
+CCDT files
+slow_start scripts
+Configure the deployment parameters in deployment
+Once a commit is made and pushed to bitbucket, a build will trigger in bamboo. See "Build Steps" below for details.
+After a successful build, a release can be created in Bamboo and can then be deployed to the environment of your choosing.
+Repository
+The configuration repository is linked to the application artifact and used to hold configuration data for both build and deployment. The repository should be
+located in the portfolio-specific MWC Cloudforge organization/project (mwc-<portfolio>) and named was-<application_name>. A template repository can be
+used to bootstrap one of these repositories:https://git.forge.lmig.com/projects/USCM-DEVOPS/repos/was-configuration-template/browse?at=refs%
+2Fheads%2Fexample_release
+Configuration Files
+1.
+2.
+a.
+b.
+c.
+3.
+4.
+a.
+b.
+c.
+5.
+a.
+i.
+b.
+c.
+i.
+d.
+6.
+a.
+b.
+1.
+2.
+3.
+4.
+5.
+6.
+7.
+8.
+Dockerfile- The Dockerfile is a templated build script which is used with the Bamboo pipeline to build a version application image. The only line
+that should be changed in this file is the "FROM" line to determine which version of the base image to use. The rest of the process utilizes the
+configuration library version defined inconfig/app_config.yml
+config/app_config.yml- This file defines:
+The version of the configuration library to use to build the image (numbered version or "latest")
+The location of the EAR/WAR files deployed with the image build
+The list of environments that should be configured for this application.
+config/healthcheck.yml- List of endpoints to check to determine if the application is operating normally. Used to determine if an application
+container needs to be recreated when unhealthy.
+config/predeploy/*- Configuration files related to the "predeploy" (before installing EAR files) phase of the build process. This includes all
+prerequisites that applications need configured prior to installation and any non-environment-specific settings that can be configured.
+config/predeploy/config- Contains the predeploy phase YAML configuration files broken down by resource type. A full list of available
+options can be found here:WAS Predeploy Configuration Schema
+config/predeploy/ansible/predeploy_playbook.yml- Optional ansible playbook used to configure non-WAS resources. Examples
+include creating directories, downloading files, etc.
+config/predeploy/ccdt/*.tab- CCDT (MQ channel definition) file(s) copied into the container during build for use with MQ resources
+(QCF/AS)
+config/runtime/*-Configuration files related to "runtime" (when the container starts up). These configuration options are applied when the
+container starts and are typically environment-specific settings and/or configuration values with secrets.
+config/runtime/config-Contains the runtime phase YAML configuration files broken down by resource type. A full list of available
+options can be found here:WAS Runtime Configuration Schema
+Default and environment-specific folders are used inside of the runtime configuration folder to create a composite configuration
+file for each environment. Any configurations in environment-specific folders will add to or override values in the default
+configurations.
+config/runtime/properties -environment-specific properties files used by some applications to configure settings. These files will be
+copied to /was_app_properties before starting the application server.
+config/runtime/ansible/runtime_playbook.yml- Optional ansible playbook used to configure non-WAS resources before starting the
+appserver. Examples include creating directories, downloading files, etc.
+Note: default and env-specific folders are used for runtime ansible configuration. If an environment-specific playbook is defined
+for an environment, it is used in place of the default, otherwise the default will be used.
+config/runtime/slow_start/run.sh- Optional script (or set of scripts called by run.sh) used to "warm up" your container prior to marking
+the container as healthy and allowing traffic.
+deployment- Deployment configuration files used by CloudForge/Bamboo to deploy your application to Kubernetes.
+deployment/<env>/kubernetes-<env>.yml- Forge manifest used to configure variables and the location of a CAMfile used to deploy
+your application.
+deployment/app-<env>-camfile.yml(configurable) - camfile manifest used to tell Cloudforge how to deploy your application. This
+CAMfille will be converted to a full Kubernetes manifest prior to deployment.
+WAS Configuration Management Library
+The WAS configuration management library can be found here:https://git.forge.lmig.com/projects/USCM-DEVOPS/repos/mwc-was-config-mgmt/browseThi
+s library is versioned and used for all aspects of WAS container image build and configuration. It is written in both Python 3 and Jython 2.7 (Websphere
+wsadmin). The library includes built-in schema-based validation and default/override patterns for simplification of configuration settings. If you have worked
+with the MWC BPM configuration library, the syntax is similar with the notable difference that images created with WAS areNOTenvironment-specific and
+instead all environment-specific settings will be applied at runtime prior to application server startup. This single image pattern ensures that, as much as
+possible, the testing performed against this image in non-production will be as close to production as possible.
+Loading and Embedding Secrets
+Secrets are passwords or other sensitive information that should not be embedded in the Docker image, and instead should only be injected at runtime. To
+configure secrets to be loaded at runtime, use{{placeholder}} variables (surrounded by double curly-brackets) within the values of runtime configuration
+YAML files. These values match up to the names of secrets loaded into Vault using Cloudforge.Note: We are using single-value secrets - this means
+each secret in Cloudforge will only have one "key" called "value".
+Example:
+{{test-password}}
+Secret Name: test-password
+Secret Key: value
+Secret Value: <actual password>
+For information on loading Vault secrets using CloudForge Console see:Loading Vault Secrets
+Build Steps
+Pull base image from Artifactory (Dockerfile FROM)
+Determine configuration library version (app_config.yml) and retrieve from Artifactory
+Run compiler to validate and compile the configuration data
+Run predeploy ansible and predeploy configuration management script
+Install application EAR/WAR files
+Stage runtime configurations and scripts
+Start up WAS application server to perform simple validation
+8.
+9.
+10.
+Stop WAS app server cleanly
+Scan image with AQUA scanner
+Push resulting image to Artifactory
+Monitoring and Logging
+AppDynamics
+AppDynamics APM agents are embedded into the deployment process and can be configured using environment variables during deployment.
+Environment variable spec TBD.
+Splunk
+Application Server Logs (SystemOut.log and SystemErr.log) are forwarded to Splunk
+The index where these logs will be sent is TBD
+Non-Splunk Logs
+Because there are FFDC, native_std*.log, and other log files which may also need to be viewed outside of the containers, all logs will be sent to
+EFS (AWS) / NAS (on-prem) which is exposed using the MWC logviewer web application (link will be provided at a later date)
